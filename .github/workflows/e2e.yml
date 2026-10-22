@@ -41,11 +41,6 @@ jobs:
       with:
         persist-credentials: false
 
-    - name: Install Go
-      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-      with:
-        go-version: 1.24.x
-
     - name: Build docker
       run: |
         GIT_TAG=ci-e2e-test PUSH=--load make image-build

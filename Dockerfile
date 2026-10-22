@@ -13,7 +13,9 @@
 # limitations under the License.
 
 # Build the node-ipam-controller binary
-FROM --platform=$BUILDPLATFORM golang:1.27 AS builder
+# The Makefile sets BUILDER_IMAGE from .go-version
+ARG BUILDER_IMAGE=golang:1.27.3
+FROM --platform=$BUILDPLATFORM ${BUILDER_IMAGE} AS builder
 ARG TARGETOS
 ARG TARGETARCH
 

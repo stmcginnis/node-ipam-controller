@@ -22,8 +22,8 @@ IMG ?= $(IMAGE_REPO):$(GIT_TAG)
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.31.x
 
-# Use go.mod go version as a single source of truth of GO version.
-GO_VERSION := $(shell awk '/^go /{print $$2}' go.mod|head -n1)
+# .go-version is the single source of truth for the Go toolchain version.
+GO_VERSION := $(shell cat .go-version)
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
@@ -156,7 +156,7 @@ docker-buildx: ## Build and push docker image for node-ipam-controller for cross
 	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
 	- $(CONTAINER_TOOL) buildx create --name project-v3-builder
 	$(CONTAINER_TOOL) buildx use project-v3-builder
-	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
+	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --build-arg BUILDER_IMAGE=$(BUILDER_IMAGE) --tag ${IMG} -f Dockerfile.cross .
 	- $(CONTAINER_TOOL) buildx rm project-v3-builder
 	rm Dockerfile.cross
 
